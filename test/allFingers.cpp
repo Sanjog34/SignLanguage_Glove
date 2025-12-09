@@ -1,27 +1,24 @@
 #include <Wire.h>
 #include <Arduino.h>
 
-// ===========================
+
 // FLEX SENSOR CONFIGURATION
-// ===========================
 // Assign your sensor pins here
-// (Use ADC1 pins for stability)
 
-const int PIN_INDEX_UP      = 36; 
-const int PIN_INDEX_LOW     = 39;
 
-const int PIN_MIDDLE_UP     = 13;
-const int PIN_MIDDLE_LOW    = 14;
+const int PIN_INDEX_UP      = 14; 
+const int PIN_INDEX_LOW     = 27;
 
-const int PIN_RING_UP       = 32;
-const int PIN_RING_LOW      = 33;
+const int PIN_MIDDLE_UP     = 26;
+const int PIN_MIDDLE_LOW    = 25;
 
-const int PIN_THUMB         = 34;   // One sensor only
+const int PIN_RING_UP       = 33;
+const int PIN_RING_LOW      = 32;
+
+const int PIN_THUMB         = 13;   // One sensor only
 const int PIN_PINKY         = 35;   // One sensor only
 
-// ===========================
-// MOVING AVERAGE SETTINGS
-// ===========================
+
 const int FLEX_SAMPLES = 10;
 
 // Structure for each flex sensor
@@ -31,6 +28,7 @@ struct FlexSensor {
   int index = 0;
   int total = 0;
   int baseline = 0;
+  int type;
 };
 
 // Create objects for each sensor
@@ -45,8 +43,9 @@ FlexSensor thumbFlex, pinkyFlex;
 // ===========================
 
 // --- Initialize one sensor (calibration + buffer fill) ---
-void initFlex(FlexSensor &fs, int pin) {
+void initFlex(FlexSensor &fs, int pin, int type ) {
   fs.pin = pin;
+  fs.type = type;
 
   long sum = 0;
   for (int i = 0; i < 100; i++) {
@@ -64,6 +63,7 @@ void initFlex(FlexSensor &fs, int pin) {
 
 // --- Read and smooth one sensor ---
 float readFlex(FlexSensor &fs) {
+  float angle;
   fs.total -= fs.buffer[fs.index];
   fs.buffer[fs.index] = analogRead(fs.pin);
   fs.total += fs.buffer[fs.index];
@@ -73,31 +73,33 @@ float readFlex(FlexSensor &fs) {
   float avg = fs.total / (float)FLEX_SAMPLES;
 
   // Convert to bend angle (0–1000 scale)
-  float angle = map(avg, fs.baseline, 4095, 0, 1000);
+  if(fs.type==0)
+   float angle = map(avg, fs.baseline, 4095, 0, 1000);
+  else if(fs.type==1)
+   float angle = map(avg, fs.baseline, 4095, 0, 180);
   if (angle < 0) angle = 0;
 
   return angle;
 }
 
 
-// ===========================
+
 // SETUP
-// ===========================
 void setup() {
   Serial.begin(115200);
 
   // Initialize all flex sensors
-  initFlex(indexUp,    PIN_INDEX_UP);
-  initFlex(indexLow,   PIN_INDEX_LOW);
+  initFlex(indexUp,    PIN_INDEX_UP,0);
+  initFlex(indexLow,   PIN_INDEX_LOW,0);
 
-  initFlex(middleUp,   PIN_MIDDLE_UP);
-  initFlex(middleLow,  PIN_MIDDLE_LOW);
+  initFlex(middleUp,   PIN_MIDDLE_UP,1);
+  initFlex(middleLow,  PIN_MIDDLE_LOW,1);
 
-  initFlex(ringUp,     PIN_RING_UP);
-  initFlex(ringLow,    PIN_RING_LOW);
+  initFlex(ringUp,     PIN_RING_UP,0);
+  initFlex(ringLow,    PIN_RING_LOW,0);
 
-  initFlex(thumbFlex,  PIN_THUMB);
-  initFlex(pinkyFlex,  PIN_PINKY);
+  initFlex(thumbFlex,  PIN_THUMB,0);
+  initFlex(pinkyFlex,  PIN_PINKY,0);
 
   Serial.println("Calibration complete.");
   Serial.println("Output: idxUp,idxLow,midUp,midLow,ringUp,ringLow,thumb,pinky");

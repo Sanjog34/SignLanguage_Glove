@@ -33,7 +33,10 @@ words = [
     ("sanchai", "सन्चै"),
     ("aaja", "आज"),
     ("kati", "कति"),
-    ("sathi", "साथी")
+    ("sathi", "साथी"),
+    ("fist", "मुट्ठी"),
+    ("thumbup", "राम्रो"),
+    ("two", "दुई"),
 ]
 
 nepali_numbers = [
@@ -43,17 +46,17 @@ nepali_numbers = [
 print("\nGenerating Nepali TTS files...\n")
 
 # === Generate consonants (1.mp3, 2.mp3, ...) ===
-for i, consonant in enumerate(consonants, start=1):
-    filename = f"{CONSONANT_DIR}/{i}.mp3"
-    print(f"Saving consonant: {consonant} -> {filename}")
+# for i, consonant in enumerate(consonants, start=1):
+#     filename = f"{CONSONANT_DIR}/{i}.mp3"
+#     print(f"Saving consonant: {consonant} -> {filename}")
 
-    if not os.path.exists(filename):
-        tts = gTTS(text=consonant, lang='hi')
-        tts.save(filename)
+#     if not os.path.exists(filename):
+#         tts = gTTS(text=consonant, lang='hi')
+#         tts.save(filename)
 
-    # play
-    os.system(f"mpg123 '{filename}' > /dev/null 2>&1")
-    time.sleep(0.5)
+#     # play
+#     os.system(f"mpg123 '{filename}' > /dev/null 2>&1")
+#     time.sleep(0.5)
 
 # === Generate words (1.mp3, 2.mp3, ...) ===
 for  roman,dev in words:
@@ -65,20 +68,20 @@ for  roman,dev in words:
         tts.save(filename)
 
     # play
-    os.system(f"mpg123 '{filename}' > /dev/null 2>&1")
-    time.sleep(0.5)
+        os.system(f"mpg123 '{filename}' > /dev/null 2>&1")
+        time.sleep(0.5)
     
 # === Generate numbers (0.mp3, 1.mp3, ...) ===
-for i, number in enumerate(nepali_numbers, start=0):
-    filename = f"{NUMBERS_DIR}/{i}.mp3"
-    print(f"Saving number: {number} -> {filename}")
+# for i, number in enumerate(nepali_numbers, start=0):
+#     filename = f"{NUMBERS_DIR}/{i}.mp3"
+#     print(f"Saving number: {number} -> {filename}")
 
-    if not os.path.exists(filename):
-        tts = gTTS(text=number, lang='hi')
-        tts.save(filename)
+#     if not os.path.exists(filename):
+#         tts = gTTS(text=number, lang='hi')
+#         tts.save(filename)
 
-    # play
-    os.system(f"mpg123 '{filename}' > /dev/null 2>&1")
-    time.sleep(0.5)
+#     # play
+#     os.system(f"mpg123 '{filename}' > /dev/null 2>&1")
+#     time.sleep(0.5)
 
 print("\n✔ All audio files generated and played successfully!\n")

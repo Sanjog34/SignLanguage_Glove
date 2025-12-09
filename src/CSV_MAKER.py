@@ -204,7 +204,7 @@ from collections import deque
 # === SETTINGS ===
 PORT = '/dev/ttyUSB0'       # ESP32 port
 BAUD_RATE = 115200
-CSV_FILE = 'sensor_data_8flex.csv'
+CSV_FILE = 'sensor_data_8flex_new_ka.csv'
 MAX_RECORDS = 500            # total samples to record
 WRITE_INTERVAL = 50          # write to CSV every 50 entries
 
@@ -212,7 +212,7 @@ WRITE_INTERVAL = 50          # write to CSV every 50 entries
 log_queue = deque(maxlen=MAX_RECORDS)
 entry_count = 0
 total_entries = 0
-LABEL = "O"  # Change label as needed
+LABEL = "ka"  # Change label as needed
 # Load previous CSV if exists
 try:
     with open(CSV_FILE, 'r') as file:
