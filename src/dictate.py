@@ -1,9 +1,9 @@
 import os
 
 # Directories
-CONSONANT_DIR = "consonants_mp3"
-WORD_DIR = "words_mp3"
-NUMBERS_DIR = "numbers_mp3"
+CONSONANT_DIR = "../sounds/consonants_mp3"
+WORD_DIR = "../sounds/words_mp3"
+NUMBERS_DIR = "../sounds/numbers_mp3"
 
 # Lists
 consonants = [

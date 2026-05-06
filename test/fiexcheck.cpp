@@ -11,23 +11,23 @@ void setup() {
  Serial.begin(115200);
 }
 void loop() {
-  int indexUp = analogRead(14);
-  int indexLow = analogRead(27);
-  int middleUp = analogRead(26);
-  int middleLow = analogRead(25);
-  int ringUp = analogRead(33);
-  int ringLow = analogRead(32);
-  int thumbFlex = analogRead(13);
-  int pinkyFlex = analogRead(35);
+  int indexUp = analogRead(32);
+  int indexLow = analogRead(33);
+  int middleUp = analogRead(25);
+  int middleLow = analogRead(26);
+  int ringUp = analogRead(27);
+  int ringLow = analogRead(14);
+  int thumbFlex = analogRead(35);
+  int pinkyFlex = analogRead(13);
 
-  Serial.print(indexUp); Serial.print(",");
-  Serial.print(indexLow); Serial.print(",");
-  Serial.print(middleUp); Serial.print(",");
-  Serial.print(middleLow); Serial.print(",");
-  Serial.print(ringUp); Serial.print(",");
-  Serial.print(ringLow); Serial.print(",");
+  // Serial.print(indexUp); Serial.print(",");
+  // Serial.print(indexLow); Serial.print(",");
+  // Serial.print(middleUp); Serial.print(",");
+  // Serial.print(middleLow); Serial.print(",");
+  // Serial.print(ringUp); Serial.print(",");
+  // Serial.print(ringLow); Serial.print(",");
   Serial.print(thumbFlex); Serial.print(",");
   Serial.println(pinkyFlex);
 
-  delay(1000);
+  delay(500);
 }

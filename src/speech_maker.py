@@ -36,7 +36,7 @@ words = [
     ("sathi", "साथी"),
     ("fist", "मुट्ठी"),
     ("thumbup", "राम्रो"),
-    ("two", "दुई"),
+    ("twoo", "दुईई"),
 ]
 
 nepali_numbers = [

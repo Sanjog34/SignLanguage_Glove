@@ -6,17 +6,17 @@
 // Assign your sensor pins here
 
 
-const int PIN_INDEX_UP      = 14; 
-const int PIN_INDEX_LOW     = 27;
+const int PIN_INDEX_UP      = 32; 
+const int PIN_INDEX_LOW     = 33;
 
-const int PIN_MIDDLE_UP     = 26;
-const int PIN_MIDDLE_LOW    = 25;
+const int PIN_MIDDLE_UP     = 25;
+const int PIN_MIDDLE_LOW    = 26;
 
-const int PIN_RING_UP       = 33;
-const int PIN_RING_LOW      = 32;
+const int PIN_RING_UP       = 27;
+const int PIN_RING_LOW      = 14;
 
-const int PIN_THUMB         = 13;   // One sensor only
-const int PIN_PINKY         = 35;   // One sensor only
+const int PIN_THUMB         = 35;   // One sensor only
+const int PIN_PINKY         = 13;   // One sensor only
 
 
 const int FLEX_SAMPLES = 10;
@@ -59,6 +59,10 @@ void initFlex(FlexSensor &fs, int pin, int type ) {
     fs.buffer[i] = fs.baseline;
     fs.total += fs.baseline;
   }
+    Serial.print("Flex sensor pin ");
+  Serial.print(pin);
+  Serial.print(" baseline: ");
+  Serial.println(fs.baseline);
 }
 
 // --- Read and smooth one sensor ---
@@ -72,13 +76,21 @@ float readFlex(FlexSensor &fs) {
 
   float avg = fs.total / (float)FLEX_SAMPLES;
 
+// Serial.print(fs.pin);
+// Serial.print("    ");
+// Serial.print(avg);
+// Serial.print("    ");
+// Serial.print(fs.baseline);
   // Convert to bend angle (0–1000 scale)
   if(fs.type==0)
-   float angle = map(avg, fs.baseline, 4095, 0, 1000);
+    angle = map(avg, fs.baseline, 4095, 0, 1000);
   else if(fs.type==1)
-   float angle = map(avg, fs.baseline, 4095, 0, 180);
+    angle = map(avg, fs.baseline, 4095, 0, 180);
   if (angle < 0) angle = 0;
-
+// Serial.print("  angle ");
+// Serial.print(fs.pin);
+// Serial.print(" ");
+// Serial.println(angle);
   return angle;
 }
 

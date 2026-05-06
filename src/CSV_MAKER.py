@@ -204,7 +204,7 @@ from collections import deque
 # === SETTINGS ===
 PORT = '/dev/ttyUSB0'       # ESP32 port
 BAUD_RATE = 115200
-CSV_FILE = 'sensor_data_8flex_new_ka.csv'
+CSV_FILE = '../datasets/sensor_data_8flex_new_char.csv'
 MAX_RECORDS = 500            # total samples to record
 WRITE_INTERVAL = 50          # write to CSV every 50 entries
 
@@ -212,7 +212,7 @@ WRITE_INTERVAL = 50          # write to CSV every 50 entries
 log_queue = deque(maxlen=MAX_RECORDS)
 entry_count = 0
 total_entries = 0
-LABEL = "ka"  # Change label as needed
+LABEL = "char"  # Change label as needed
 # Load previous CSV if exists
 try:
     with open(CSV_FILE, 'r') as file:
@@ -240,8 +240,8 @@ def open_serial():
 ser = open_serial()
 
 print("Press Ctrl+C to stop.\n")
-print("{:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}".format(
-    "idxUp", "idxLow", "midUp", "midLow", "ringUp", "ringLow", "thumb", "pinky", "label"))
+print("{:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}".format(
+    "idxUp", "idxLow", "midUp", "midLow", "ringUp", "ringLow", "thumb", "pinky","ax","ay","az","gx","gy","gz", "label"))
 
 try:
     while total_entries < MAX_RECORDS:
@@ -251,7 +251,7 @@ try:
                 continue
 
             parts = line.split(',')
-            if len(parts) != 8:
+            if len(parts) != 14:
                 continue  # skip invalid lines
 
             # Convert to float
@@ -263,13 +263,13 @@ try:
             total_entries += 1
 
             # Print nicely
-            print("{:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8}".format(*flex_values))
+            print("{:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8.2f} {:<8}".format(*flex_values))
 
             # Write CSV periodically
             if entry_count >= WRITE_INTERVAL or total_entries == MAX_RECORDS:
                 with open(CSV_FILE, 'w', newline='') as file:
                     writer = csv.writer(file)
-                    writer.writerow(['idxUp','idxLow','midUp','midLow','ringUp','ringLow','thumb','pinky','label'])
+                    writer.writerow(['idxUp','idxLow','midUp','midLow','ringUp','ringLow','thumb','pinky','ax','ay','az','gx','gy','gz','label'])
                     writer.writerows(log_queue)
                 entry_count = 0
 
@@ -289,7 +289,7 @@ finally:
     # Save CSV on exit
     with open(CSV_FILE, 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['idxUp','idxLow','midUp','midLow','ringUp','ringLow','thumb','pinky','label'])
+        writer.writerow(['idxUp','idxLow','midUp','midLow','ringUp','ringLow','thumb','pinky','ax','ay','az','gx','gy','gz','label'])
         writer.writerows(log_queue)
     ser.close()
     print("CSV file saved and serial connection closed.")
