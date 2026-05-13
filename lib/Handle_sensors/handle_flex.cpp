@@ -35,9 +35,11 @@ float readFlex(FlexSensor &fs)
 
   // Convert to bend angle (0–1000 scale)
   if (fs.type == 0)
-    angle = map(avg, fs.baseline, 4095, 0, 1000);
+    angle = map(avg, fs.baseline, 2480, 0, 1000);
   else if (fs.type == 1)
     angle = map(avg, fs.baseline, 4095, 0, 180);
+   else if (fs.type == -1)
+    angle = map(avg, fs.baseline, 2480, 0, 200);
   if (angle < 0)
     angle = 0;
 
