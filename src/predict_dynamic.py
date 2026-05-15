@@ -311,7 +311,7 @@ import dictate_dynamic
 import dictate
 import joblib
 
-STATIC_MODEL_PATH = "../models(joblib)/Gesture_Model.joblib"
+STATIC_MODEL_PATH = "../models(joblib)/Gesture_Model_20K.joblib"
 
 try:
     static_model = joblib.load(STATIC_MODEL_PATH)
@@ -321,7 +321,7 @@ except Exception as e:
 
 # ── CLI args ───────────────────────────────────────────────────────────────────
 parser = argparse.ArgumentParser(description="Gesture Inference via Serial Port")
-parser.add_argument("--port",          default="/dev/ttyUSB0", help="Serial port")
+parser.add_argument("--port",          default="/dev/ttyUSB1", help="Serial port")
 parser.add_argument("--baud",          default=115200, type=int, help="Baud rate")
 parser.add_argument("--model",         default="../jupyter/gesture_model.h5", help="Path to .h5 model")
 parser.add_argument("--scaler",        default="../jupyter/scaler.pkl",        help="Path to scaler pickle")

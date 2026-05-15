@@ -262,7 +262,7 @@ import serial
 from collections import deque
 
 # ── Serial config ─────────────────────────────────────────────────────────────
-PORT = '/dev/ttyUSB0'
+PORT = '/dev/ttyUSB1'
 BAUD_RATE = 115200
 
 # ── Classifier config ─────────────────────────────────────────────────────────
@@ -275,10 +275,10 @@ GZ_IDX = 13
 
 # ── Recorder config ───────────────────────────────────────────────────────────
 MAX_STATIC_TOLERANCE = 7
-OUTPUT_FILE = "../JSON_DYNAMIC_DATA/gesture_dataset_namaste.json"
+OUTPUT_FILE = "../JSON_DYNAMIC_DATA/gesture_dataset_ho_20k.json"
 
 # gesture label
-GESTURE_LABEL = input("Enter gesture label: ").strip()
+GESTURE_LABEL = "ho"
 
 
 # ══ Classifier ════════════════════════════════════════════════════════════════
@@ -295,9 +295,6 @@ def parse_row(line: str):
 
 
 def classify(buffer: deque) -> str:
-    """
-    Dynamic if gyro delta exceeds threshold.
-    """
 
     if len(buffer) < BUFFER_SIZE:
         return 'static'

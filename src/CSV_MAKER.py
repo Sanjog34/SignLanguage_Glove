@@ -204,7 +204,7 @@ from collections import deque
 # === SETTINGS ===
 PORT = '/dev/ttyUSB0'       # ESP32 port
 BAUD_RATE = 115200
-CSV_FILE = '../datasets/sensor_data_8flex_new_char.csv'
+CSV_FILE = '../datasets/20K/sensor_data_8flex_new_kha_20k.csv'
 MAX_RECORDS = 500            # total samples to record
 WRITE_INTERVAL = 50          # write to CSV every 50 entries
 
@@ -212,7 +212,7 @@ WRITE_INTERVAL = 50          # write to CSV every 50 entries
 log_queue = deque(maxlen=MAX_RECORDS)
 entry_count = 0
 total_entries = 0
-LABEL = "char"  # Change label as needed
+LABEL = "kha"  # Change label as needed
 # Load previous CSV if exists
 try:
     with open(CSV_FILE, 'r') as file:
@@ -251,8 +251,9 @@ try:
                 continue
 
             parts = line.split(',')
-            if len(parts) != 14:
+            if len(parts) != 17:
                 continue  # skip invalid lines
+            parts = parts[:14]
 
             # Convert to float
             flex_values = list(map(float, parts)) +[LABEL]

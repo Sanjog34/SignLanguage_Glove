@@ -4,6 +4,43 @@ import os
 CONSONANT_DIR = "../sounds/consonants_mp3"
 WORD_DIR = "../sounds/words_mp3"
 NUMBERS_DIR = "../sounds/numbers_mp3"
+changed = 0
+# Lists
+consonants = [
+    "क", "ख", "ग", "घ", "ङ",
+    "च", "छ", "ज", "झ", "ञ",
+    "ट", "ठ", "ड", "ढ", "ण",
+    "त", "थ", "द", "ध", "न",
+    "प", "फ", "ब", "भ", "म",
+    "य", "र", "ल", "व",
+    "श", "ष", "स", "ह",
+    "क्ष", "त्र", "ज्ञ"
+]
+
+words = [
+    # ("mero", "मेरो"),
+    # ("timi", "तिमी"),
+    # ("khana", "खाना"),
+    # ("pani", "पानी"),
+    # ("namaste", "नमस्ते"),
+    # ("dhanyabad", "धन्यवाद"),
+    # ("sanchai", "सन्चै"),
+    # ("aaja", "आज"),
+    # ("kati", "कति"),
+    # ("sathi", "साथी"),
+    # ("fist", "मुट्ठी"),
+    # ("thumbup", "राम्रो"),
+    # ("two", "दुई"),
+    # ("naam", "नाम"),
+    ("ho", "हो"),
+    ("huncha", "हुन्छ"),
+    ("mero", "मेरो"),
+]
+
+nepali_numbers = [
+    "०","१","२","३","४","५","६","७","८","९"
+]
+
 
 def play_sound(file_path, static_playing: int) -> int:
     if not hasattr(play_sound, "last_file"):
@@ -27,15 +64,6 @@ def play_sound(file_path, static_playing: int) -> int:
         else:
             print(f"File not found: {file_path}")
             return 0
-    if play_sound.counter > 15 :
-        changed=1
-        print(" returning 1")
-        return 1
-    if changed==1 :
-        print(" returning 1")
-        return 1 
-    else :
-        return 0
     
     # Always return True to arm subsequent predictions
     

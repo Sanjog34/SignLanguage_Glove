@@ -1,9 +1,10 @@
 import serial
 import joblib
 import pandas as pd
+import dictate_01
 import dictate
 
-PORT = '/dev/ttyUSB0'
+PORT = '/dev/ttyUSB2'
 BAUD_RATE = 115200
 MODEL_FILE = '../models(joblib)/Gesture_Model.joblib'
 
@@ -29,10 +30,10 @@ try:
             continue
 
         parts = line.split(',')
-        if len(parts) < 18:
+        if len(parts) < 17:
             continue
 
-        parts = parts[1:15]
+        parts = parts[:14]
 
         try:
             idxUp, idxLow, midUp, midLow, ringUp, ringLow, thumb, pinky, ax, ay, az, gx, gy, gz = map(float, parts)
@@ -53,31 +54,52 @@ try:
 
         if pred == 0:
             label = 'ka'
-            dictate.play_sound(dictate.CONSONANT_DIR + '/1.mp3')
+            dictate_01.play_sound(dictate.CONSONANT_DIR + '/0.mp3',1)
         elif pred == 1:
             label = 'kha'
-            dictate.play_sound(dictate.CONSONANT_DIR + '/2.mp3')
+            dictate_01.play_sound(dictate.CONSONANT_DIR + '/1.mp3',1)
         elif pred == 2:
             label = 'ga'
-            dictate.play_sound(dictate.CONSONANT_DIR + '/3.mp3')
+            dictate_01.play_sound(dictate.CONSONANT_DIR + '/2.mp3',1)
         elif pred == 3:
             label = 'gha'
-            dictate.play_sound(dictate.CONSONANT_DIR + '/4.mp3')
+            dictate_01.play_sound(dictate.CONSONANT_DIR + '/3.mp3',1)
         elif pred == 4:
             label = 'nga'
-            dictate.play_sound(dictate.CONSONANT_DIR + '/5.mp3')
+            dictate_01.play_sound(dictate.CONSONANT_DIR + '/4.mp3',1)
+        elif pred == 44:
+            label = 'cha'
+            dictate_01.play_sound(dictate.NUMBERS_DIR + '/5.mp3',1)
         elif pred == 5:
             label = 'ek'
-            dictate.play_sound(dictate.NUMBERS_DIR + '/1.mp3')
+            dictate_01.play_sound(dictate.NUMBERS_DIR + '/1.mp3',1)
         elif pred == 6:
             label = 'dui'
-            dictate.play_sound(dictate.NUMBERS_DIR + '/2.mp3')
+            dictate_01.play_sound(dictate.NUMBERS_DIR + '/2.mp3',1)
         elif pred == 7:
             label = 'tin'
-            dictate.play_sound(dictate.NUMBERS_DIR + '/3.mp3')
+            dictate_01.play_sound(dictate.NUMBERS_DIR + '/3.mp3',1)
         elif pred == 8:
             label = 'char'
-            dictate.play_sound(dictate.NUMBERS_DIR + '/4.mp3')
+            dictate_01.play_sound(dictate.NUMBERS_DIR + '/4.mp3',1)
+        elif pred == 10:
+            label = 'pach'
+            dictate_01.play_sound(dictate.NUMBERS_DIR + '/5.mp3',1)
+        elif pred == 11:
+            label = 'chha'
+            dictate_01.play_sound(dictate.NUMBERS_DIR + '/6.mp3',1)
+        elif pred == 12:
+            label = 'saat'
+            dictate_01.play_sound(dictate.NUMBERS_DIR + '/7.mp3',1)
+        elif pred == 13:
+            label = 'aath'
+            dictate_01.play_sound(dictate.NUMBERS_DIR + '/8.mp3',1)
+        elif pred == 14:
+            label = 'naau'
+            dictate_01.play_sound(dictate.NUMBERS_DIR + '/9.mp3',1)
+        
+        
+        
         else:
             label = 'unknown'
 
