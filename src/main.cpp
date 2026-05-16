@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <Arduino.h>
-// #include "BluetoothSerial.h"
+#include "BluetoothSerial.h"
 #include "handle_gyro.h"
 #include "handle_flex.h"
 
@@ -21,7 +21,7 @@ float *values_to_send={};
 char Status ='D';
 long timekeep =0;
 
-// BluetoothSerial SerialBT;
+BluetoothSerial SerialBT;
 
 // Create objects for each sensor
 FlexSensor indexUp, indexLow;
@@ -34,7 +34,7 @@ void setup()
   pinMode(4,INPUT_PULLDOWN);
   handle_gyro_init(MPU_ADDR);
   Serial.begin(115200);
-  // SerialBT.begin("ESP32_BT");
+  SerialBT.begin("ESP32_BT");
   // Initialize all flex sensors
   initFlex(indexUp, PIN_INDEX_UP, -1);
   initFlex(indexLow, PIN_INDEX_LOW, 0);
@@ -99,29 +99,39 @@ void loop()
   Serial.print(",");
   Send_gyro_values(calc_values(Get_MPU_Data(MPU_ADDR)));
 // bluetooth
-//   SerialBT.print(Status);
-//   SerialBT.print(",");
-//   SerialBT.print(idxUp, 2);
-//   SerialBT.print(",");
-//   SerialBT.print(idxLow, 2);
-//   SerialBT.print(",");
-//   SerialBT.print(midUp, 2);
-//   SerialBT.print(",");
-//   SerialBT.print(midLow, 2);
-//   SerialBT.print(",");
-//   SerialBT.print(RingUp, 2);
-//   SerialBT.print(",");
-//   SerialBT.print(RingLow, 2);
-//   SerialBT.print(",");
-//   SerialBT.print(thumb, 2);
-//   SerialBT.print(",");
-//   SerialBT.print(pinky, 2);
-//   SerialBT.print(",");
-//  values_to_send=calc_values(Get_MPU_Data(MPU_ADDR));
-//    SerialBT.print(values_to_send[0], 2);
-//   SerialBT.print(",");
-//   SerialBT.print(values_to_send[1], 2);
-//   SerialBT.print(",");
-//   SerialBT.print(values_to_send[2], 2);
-  delay(50);
+  SerialBT.print(idxUp, 2);
+  SerialBT.print(",");
+  SerialBT.print(idxLow, 2);
+  SerialBT.print(",");
+  SerialBT.print(midUp, 2);
+  SerialBT.print(",");
+  SerialBT.print(midLow, 2);
+  SerialBT.print(",");
+  SerialBT.print(RingUp, 2);
+  SerialBT.print(",");
+  SerialBT.print(RingLow, 2);
+  SerialBT.print(",");
+  SerialBT.print(thumb, 2);
+  SerialBT.print(",");
+  SerialBT.print(pinky, 2);
+  SerialBT.print(",");
+ values_to_send=calc_values(Get_MPU_Data(MPU_ADDR));
+   SerialBT.print(values_to_send[0], 2);
+  SerialBT.print(",");
+  SerialBT.print(values_to_send[1], 2);
+  SerialBT.print(",");
+  SerialBT.print(values_to_send[2], 2);
+  SerialBT.print((values_to_send[4] < 0 && values_to_send[4] > -1) ? 0 : values_to_send[4], 0);
+  SerialBT.print(",");
+  SerialBT.print((values_to_send[5] < 0 && values_to_send[5] > -1) ? 0 : values_to_send[5], 0);
+  SerialBT.print(",");
+  SerialBT.print((values_to_send[6] < 0 && values_to_send[6] > -1) ? 0 : values_to_send[6], 0);
+  SerialBT.print(",");
+  SerialBT.print(values_to_send[7], 2);
+  SerialBT.print(",");
+  SerialBT.print(values_to_send[8], 2);
+  SerialBT.print(",");
+  SerialBT.print(values_to_send[9], 2);
+  SerialBT.println();
+  delay(60);
 }

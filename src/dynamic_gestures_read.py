@@ -262,7 +262,7 @@ import serial
 from collections import deque
 
 # ── Serial config ─────────────────────────────────────────────────────────────
-PORT = '/dev/ttyUSB1'
+PORT = '/dev/ttyUSB0'
 BAUD_RATE = 115200
 
 # ── Classifier config ─────────────────────────────────────────────────────────
@@ -274,7 +274,7 @@ GY_IDX = 12
 GZ_IDX = 13
 
 # ── Recorder config ───────────────────────────────────────────────────────────
-MAX_STATIC_TOLERANCE = 7
+MAX_STATIC_TOLERANCE = 15
 OUTPUT_FILE = "../JSON_DYNAMIC_DATA/gesture_dataset_ho_20k.json"
 
 # gesture label
@@ -303,8 +303,8 @@ def classify(buffer: deque) -> str:
     newest = buffer[-1]
 
     if (
-        abs(newest[GX_IDX] - oldest[GX_IDX]) > GYRO_THRESHOLD or
-        abs(newest[GY_IDX] - oldest[GY_IDX]) > GYRO_THRESHOLD or
+        abs(newest[GX_IDX] - oldest[GX_IDX]) > GYRO_THRESHOLD+30 or
+        abs(newest[GY_IDX] - oldest[GY_IDX]) > GYRO_THRESHOLD+30 or
         abs(newest[GZ_IDX] - oldest[GZ_IDX]) > GYRO_THRESHOLD
     ):
         return 'dynamic'

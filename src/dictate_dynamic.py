@@ -4,6 +4,7 @@ import os
 CONSONANT_DIR = "../sounds/consonants_mp3"
 WORD_DIR = "../sounds/words_mp3"
 NUMBERS_DIR = "../sounds/numbers_mp3"
+TRAINED_SOUNDS_DIR="../sounds/trained_sounds"
 
 
 def play_sound(file_path):

@@ -4,9 +4,9 @@ import pandas as pd
 import dictate_01
 import dictate
 
-PORT = '/dev/ttyUSB2'
+PORT = '/dev/ttyUSB1'
 BAUD_RATE = 115200
-MODEL_FILE = '../models(joblib)/Gesture_Model.joblib'
+MODEL_FILE = '../models(joblib)/Gesture_Model_20K_04.joblib'
 
 model = joblib.load(MODEL_FILE)
 
@@ -33,21 +33,21 @@ try:
         if len(parts) < 17:
             continue
 
-        parts = parts[:14]
+        parts = parts[:11]
 
         try:
-            idxUp, idxLow, midUp, midLow, ringUp, ringLow, thumb, pinky, ax, ay, az, gx, gy, gz = map(float, parts)
+            idxUp, idxLow, midUp, midLow, ringUp, ringLow, thumb, pinky, ax, ay, az = map(float, parts)
         except ValueError:
             continue
 
         X_input = pd.DataFrame([[
             idxUp, idxLow, midUp, midLow,
             ringUp, ringLow, thumb, pinky,
-            ax, ay, az, gx, gy, gz
+            ax, ay, az
         ]], columns=[
             'idxUp','idxLow','midUp','midLow',
             'ringUp','ringLow','thumb','pinky',
-            'ax','ay','az','gx','gy','gz'
+            'ax','ay','az'
         ])
 
         pred = model.predict(X_input)[0]

@@ -6,8 +6,8 @@ import random
 # CONFIG
 # ─────────────────────────────────────────────────────────────
 
-INPUT_JSON = "../JSON_DYNAMIC_DATA/gesture_dataset_namaste_20k.json"
-OUTPUT_JSON = "../JSON_AUGMENTED_20K/gestures_augmented_namaste_20k.json"
+INPUT_JSON = "../JSON_DYNAMIC_DATA/gesture_dataset_ho_20k.json"
+OUTPUT_JSON = "../JSON_AUGMENTED_20K/gestures_augmented_ho_20k.json"
 
 TARGET_TOTAL_SAMPLES = 1500
 
