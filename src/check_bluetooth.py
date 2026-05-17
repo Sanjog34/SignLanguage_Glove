@@ -1,47 +1,68 @@
 import serial
 import time
+import os
+import predict_dynamic_01
 
-def read_bluetooth(port, baud=115200):
-    # Release any stale binding first:
-    # sudo rfcomm release 0 && sudo rfcomm bind 0 XX:XX:XX:XX:XX:XX 1
+ESP32_MAC = "E4:65:B8:0F:73:66"
 
-    while True:  # auto-reconnect loop
+def connect_rfcomm():
+    os.system("sudo rfcomm release 0")
+    time.sleep(1)
+    os.system(f"sudo rfcomm bind 0 {ESP32_MAC} 1")
+    time.sleep(2)
+
+def read_bluetooth(port="/dev/rfcomm0", baud=115200):
+
+    while True:  # reconnect loop
         try:
+            print("[*] Connecting Bluetooth...")
+            connect_rfcomm()
+
             with serial.Serial(port, baud, timeout=2) as ser:
                 print(f"[+] Connected to {port}")
-                time.sleep(1)  # let ESP32 stabilize after connection
-                ser.reset_input_buffer()  # flush garbage from buffer
+
+                time.sleep(1)
+                ser.reset_input_buffer()
 
                 while True:
-                    # Use read_until or readline — both need \n from ESP32
                     raw_bytes = ser.readline()
 
                     if not raw_bytes:
-                        continue  # timeout, no data yet
+                        continue
 
-                    raw = raw_bytes.decode("utf-8", errors="ignore").strip()
+                    raw = raw_bytes.decode(
+                        "utf-8",
+                        errors="ignore"
+                    ).strip()
 
                     if not raw:
                         continue
 
-                    # Strip your D, or S, prefix
+                    # Remove prefix
                     if raw.startswith("D,") or raw.startswith("S,"):
                         raw = raw[2:]
 
                     if not raw.strip():
                         continue
 
-                    print(f"Data: {raw}")
-                    # your processing logic here
+                    # print(f"RAW: {raw}")
+
+                    # Run prediction directly
+                    predict_dynamic_01.print_return(raw)
 
         except serial.SerialException as e:
             print(f"[!] Connection lost: {e}")
-            print("[*] Retrying in 3 seconds...")
-            time.sleep(3)
-            # re-bind rfcomm before retry
-            import os
-            os.system("sudo rfcomm release 0")
-            os.system("sudo rfcomm bind 0 E4:65:B8:0F:73:66 1")  # ← your ESP32 MAC
+
+        except KeyboardInterrupt:
+            print("\n[!] Exiting...")
+            break
+
+        except Exception as e:
+            print(f"[ERROR] {e}")
+
+        print("[*] Reconnecting in 3 seconds...")
+        time.sleep(3)
+        
 
 if __name__ == "__main__":
-    read_bluetooth(port="/dev/rfcomm0", baud=115200)
+    read_bluetooth()

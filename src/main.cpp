@@ -45,6 +45,7 @@ void setup()
   initFlex(ringUp, PIN_RING_UP, 0);
   initFlex(ringLow, PIN_RING_LOW, 0);
 
+
   initFlex(thumbFlex, PIN_THUMB, 0);
   initFlex(pinkyFlex, PIN_PINKY, 0);
 
@@ -121,6 +122,7 @@ void loop()
   SerialBT.print(values_to_send[1], 2);
   SerialBT.print(",");
   SerialBT.print(values_to_send[2], 2);
+  SerialBT.print(",");
   SerialBT.print((values_to_send[4] < 0 && values_to_send[4] > -1) ? 0 : values_to_send[4], 0);
   SerialBT.print(",");
   SerialBT.print((values_to_send[5] < 0 && values_to_send[5] > -1) ? 0 : values_to_send[5], 0);
