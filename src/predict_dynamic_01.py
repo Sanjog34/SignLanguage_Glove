@@ -38,9 +38,9 @@ except Exception as e:
 parser = argparse.ArgumentParser(description="Gesture Inference via Serial Port")
 parser.add_argument("--port",          default="/dev/ttyUSB0", help="Serial port")
 parser.add_argument("--baud",          default=115200, type=int, help="Baud rate")
-parser.add_argument("--model",         default="../jupyter/gesture_model.h5",  help="Path to .h5 model")
-parser.add_argument("--scaler",        default="../jupyter/scaler.pkl",         help="Path to scaler pickle")
-parser.add_argument("--encoder",       default="../jupyter/label_encoder.pkl",  help="Path to label encoder pickle")
+parser.add_argument("--model",         default="../jupyter/gesture_model_final.h5",  help="Path to .h5 model")
+parser.add_argument("--scaler",        default="../jupyter/scaler_final.pkl",         help="Path to scaler pickle")
+parser.add_argument("--encoder",       default="../jupyter/label_encoder_final.pkl",  help="Path to label encoder pickle")
 parser.add_argument("--target-length", default=50, type=int,                    help="Resample timesteps")
 args = parser.parse_args()
 
@@ -993,5 +993,377 @@ if __name__ == "__main__":
 #         sys.exit(0)
 
 
+# if __name__ == "__main__":
+#     main()
+
+
+# """
+# Gesture Inference — Bluetooth Auto-Bind Version
+# ================================================
+# - Auto detects ESP32
+# - Auto binds rfcomm0
+# - Auto reconnects on disconnect
+# - Keeps full ML pipeline unchanged
+# """
+
+# import sys
+# import pickle
+# import argparse
+# import numpy as np
+# import pandas as pd
+# import time
+# import os
+# import subprocess
+# from collections import deque
+# from scipy.interpolate import interp1d
+
+# import dictate_dynamic
+# import dictate
+# import joblib
+
+# # ─────────────────────────────────────────────────────────────
+# # STATIC MODEL
+# # ─────────────────────────────────────────────────────────────
+# STATIC_MODEL_PATH = "../models(joblib)/Gesture_Model_20K_04.joblib"
+
+# try:
+#     static_model = joblib.load(STATIC_MODEL_PATH)
+#     print(f"   Static model loaded : {STATIC_MODEL_PATH}")
+# except Exception as e:
+#     sys.exit(f"Failed to load static model: {e}")
+
+# # ─────────────────────────────────────────────────────────────
+# # CLI
+# # ─────────────────────────────────────────────────────────────
+# parser = argparse.ArgumentParser()
+# parser.add_argument("--port", default="/dev/rfcomm0")
+# parser.add_argument("--baud", default=115200, type=int)
+# parser.add_argument("--model", default="../jupyter/gesture_model.h5")
+# parser.add_argument("--scaler", default="../jupyter/scaler.pkl")
+# parser.add_argument("--encoder", default="../jupyter/label_encoder.pkl")
+# parser.add_argument("--target-length", default=50, type=int)
+# args = parser.parse_args()
+
+# # ─────────────────────────────────────────────────────────────
+# # CONFIG
+# # ─────────────────────────────────────────────────────────────
+# BUFFER_SIZE = 20
+# GYRO_THRESHOLD = 50
+# MAX_STATIC_TOLERANCE = 15
+
+# GX_IDX, GY_IDX, GZ_IDX = 11, 12, 13
+
+# FEATURE_COLS = [
+#     'idxUp','idxLow','midUp','midLow',
+#     'ringUp','ringLow','thumb','pinky',
+#     'ax','ay','az'
+# ]
+
+# # ─────────────────────────────────────────────────────────────
+# # LOAD MODELS
+# # ─────────────────────────────────────────────────────────────
+# print("Loading model and artifacts...")
+
+# import serial as pyserial
+# from serial import SerialException
+
+# import tensorflow as tf
+
+# model = tf.keras.models.load_model(args.model)
+
+# with open(args.scaler, "rb") as f:
+#     scaler = pickle.load(f)
+
+# with open(args.encoder, "rb") as f:
+#     label_encoder = pickle.load(f)
+
+# # ─────────────────────────────────────────────────────────────
+# # BLUETOOTH AUTO SETUP
+# # ─────────────────────────────────────────────────────────────
+
+# def find_esp32_mac():
+#     try:
+#         output = subprocess.check_output(["bluetoothctl", "devices"]).decode()
+#         for line in output.splitlines():
+#             if "ESP" in line or "esp" in line:
+#                 return line.split()[1]
+#     except:
+#         pass
+#     return None
+
+
+# def bind_rfcomm(mac):
+#     try:
+#         print(f"  [BINDING] {mac} → rfcomm0")
+
+#         subprocess.call(["sudo", "rfcomm", "release", "0"])
+#         subprocess.check_call(["sudo", "rfcomm", "bind", "0", mac, "1"])
+
+#         print("  [OK] rfcomm0 ready")
+#         return True
+
+#     except Exception as e:
+#         print(f"  [BIND FAIL] {e}")
+#         return False
+
+
+# def connect_serial_auto():
+#     while True:
+#         try:
+#             if os.path.exists("/dev/rfcomm0"):
+#                 print("  [USING] /dev/rfcomm0")
+#                 return pyserial.Serial("/dev/rfcomm0", args.baud, timeout=1)
+
+#             mac = find_esp32_mac()
+
+#             if mac:
+#                 if bind_rfcomm(mac):
+#                     time.sleep(2)
+#                     return pyserial.Serial("/dev/rfcomm0", args.baud, timeout=1)
+
+#             print("  [WAITING FOR ESP32] retry in 3s...")
+#             time.sleep(3)
+
+#         except Exception as e:
+#             print(f"  [CONNECT ERROR] {e}")
+#             time.sleep(3)
+
+# # ─────────────────────────────────────────────────────────────
+# # FEATURE ENGINEERING
+# # ─────────────────────────────────────────────────────────────
+
+# def extract_features(samples):
+#     ts = [s["timestamp"] for s in samples]
+#     tmin, tmax = min(ts), max(ts)
+#     tr = tmax - tmin
+
+#     out = []
+#     for i, (s, t) in enumerate(zip(samples, ts)):
+#         tn = (t - tmin) / tr if tr > 0 else i / max(len(samples)-1,1)
+
+#         out.append([
+#             s["flex"]["index_upper"],
+#             s["flex"]["index_lower"],
+#             s["flex"]["middle_upper"],
+#             s["flex"]["middle_lower"],
+#             s["flex"]["ring_upper"],
+#             s["flex"]["ring_lower"],
+#             s["flex"]["thumb"],
+#             s["flex"]["pinky"],
+#             s["accel"]["x"],
+#             s["accel"]["y"],
+#             s["accel"]["z"],
+#             s["gyro"]["x"],
+#             s["gyro"]["y"],
+#             s["gyro"]["z"],
+#             tn
+#         ])
+
+#     return np.array(out)
+
+
+# def resample(seq, target):
+#     T, F = seq.shape
+#     if T == target:
+#         return seq
+
+#     x1 = np.linspace(0,1,T)
+#     x2 = np.linspace(0,1,target)
+
+#     out = np.zeros((target,F))
+#     for f in range(F):
+#         out[:,f] = interp1d(x1, seq[:,f], kind="linear")(x2)
+
+#     return out
+
+
+# def preprocess(samples):
+#     f = extract_features(samples)
+#     r = resample(f, args.target_length)
+#     N,F = r.shape
+#     s = scaler.transform(r.reshape(-1,F)).reshape(N,F)
+#     return s[np.newaxis,...]
+
+# # ─────────────────────────────────────────────────────────────
+# # PREDICTION
+# # ─────────────────────────────────────────────────────────────
+
+# def predict(samples):
+#     X = preprocess(samples)
+#     p = model.predict(X, verbose=0)[0]
+
+#     i = int(np.argmax(p))
+#     label = label_encoder.classes_[i]
+#     conf = float(p[i])
+
+#     allp = sorted(
+#         [(label_encoder.classes_[j], float(v)) for j,v in enumerate(p)],
+#         key=lambda x: x[1],
+#         reverse=True
+#     )
+
+#     return label, conf, allp
+
+# # ─────────────────────────────────────────────────────────────
+# # PARSING
+# # ─────────────────────────────────────────────────────────────
+
+# def parse_row(line):
+#     try:
+#         v = [float(x) for x in line.strip().split(",")]
+#         return v if len(v) >= 14 else None
+#     except:
+#         return None
+
+
+# def row_to_sample(row, i):
+#     return {
+#         "timestamp": i * 51,
+#         "flex": {
+#             "index_upper": row[0],
+#             "index_lower": row[1],
+#             "middle_upper": row[2],
+#             "middle_lower": row[3],
+#             "ring_upper": row[4],
+#             "ring_lower": row[5],
+#             "thumb": row[6],
+#             "pinky": row[7],
+#         },
+#         "accel": {"x": row[8], "y": row[9], "z": row[10]},
+#         "gyro": {"x": row[11], "y": row[12], "z": row[13]},
+#     }
+
+
+# def classify(buffer):
+#     if len(buffer) < BUFFER_SIZE:
+#         return "static"
+
+#     o,n = buffer[0], buffer[-1]
+
+#     if abs(n[GX_IDX]-o[GX_IDX])>GYRO_THRESHOLD or \
+#        abs(n[GY_IDX]-o[GY_IDX])>GYRO_THRESHOLD or \
+#        abs(n[GZ_IDX]-o[GZ_IDX])>GYRO_THRESHOLD:
+#         return "dynamic"
+
+#     return "static"
+
+# # ─────────────────────────────────────────────────────────────
+# # STATIC
+# # ─────────────────────────────────────────────────────────────
+
+# def run_static(row, state):
+#     try:
+#         df = pd.DataFrame([row[:11]], columns=FEATURE_COLS)
+#         pred = static_model.predict(df)[0]
+
+#         print(f"  [STATIC] {pred}", end="")
+
+#         return dictate.play_sound(
+#             dictate.TRAINED_SOUNDS_DIR + "/" + str(pred) + ".mp3",
+#             state
+#         )
+#     except:
+#         return state
+
+# # ─────────────────────────────────────────────────────────────
+# # MAIN
+# # ─────────────────────────────────────────────────────────────
+
+# def main():
+
+#     print("Gesture Inference (AUTO Bluetooth)")
+
+#     gyro = deque(maxlen=BUFFER_SIZE)
+#     session = []
+#     i = 0
+#     static_state = 0
+#     in_session = False
+#     cstatic = 0
+
+#     ser = connect_serial_auto()
+
+#     while True:
+#         try:
+#             line = ser.readline().decode("utf-8", errors="ignore").strip()
+
+#         except:
+#             print("  [DISCONNECT] reconnecting...")
+#             try: ser.close()
+#             except: pass
+#             ser = connect_serial_auto()
+#             continue
+
+#         if line.startswith(("D,", "S,")):
+#             line = line[2:]
+
+#         if not line:
+#             continue
+
+#         row = parse_row(line)
+#         if row is None:
+#             continue
+
+#         gyro.append(row)
+
+#         if len(gyro) < BUFFER_SIZE:
+#             continue
+
+#         t = classify(gyro)
+
+#         o,n = gyro[0], gyro[-1]
+#         dx,dy,dz = n[GX_IDX]-o[GX_IDX], n[GY_IDX]-o[GY_IDX], n[GZ_IDX]-o[GZ_IDX]
+
+#         if not in_session:
+
+#             if t == "static":
+#                 static_state = run_static(row, static_state)
+
+#             else:
+#                 static_state = 0
+#                 in_session = True
+#                 i = 1
+#                 cstatic = 0
+#                 session = [row_to_sample(row,i)]
+
+#         else:
+
+#             if t == "dynamic":
+#                 cstatic = 0
+#                 i += 1
+#                 session.append(row_to_sample(row,i))
+
+#             else:
+#                 cstatic += 1
+#                 i += 1
+#                 session.append(row_to_sample(row,i))
+
+#                 if cstatic > MAX_STATIC_TOLERANCE:
+
+#                     n = len(session)
+#                     print("\n session ended:", n)
+
+#                     if 35 <= n <= 70:
+#                         try:
+#                             label, conf, allp = predict(session)
+#                             top = label
+
+#                             print("  →", top)
+
+#                             dictate_dynamic.play_sound(
+#                                 dictate_dynamic.TRAINED_SOUNDS_DIR + "/" + top + ".mp3"
+#                             )
+#                         except Exception as e:
+#                             print("ERROR:", e)
+
+#                     else:
+#                         print("DROP SESSION")
+
+#                     in_session = False
+#                     session = []
+#                     i = 0
+#                     cstatic = 0
+#                     print("waiting...\n")
+
+# # ─────────────────────────────────────────────────────────────
 # if __name__ == "__main__":
 #     main()

@@ -275,10 +275,10 @@ GZ_IDX = 13
 
 # ── Recorder config ───────────────────────────────────────────────────────────
 MAX_STATIC_TOLERANCE = 15
-OUTPUT_FILE = "../JSON_DYNAMIC_DATA/gesture_dataset_ho_20k.json"
+OUTPUT_FILE = "../JSON_DYNAMIC_DATA/gesture_dataset_naam_20k.json"
 
 # gesture label
-GESTURE_LABEL = "ho"
+GESTURE_LABEL = "naam"
 
 
 # ══ Classifier ════════════════════════════════════════════════════════════════
