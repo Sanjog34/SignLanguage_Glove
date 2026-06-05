@@ -3,7 +3,7 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
-project_images
+# project_images
 test/dac.cpp
 src/predict_dynamic.py
 test/calc
