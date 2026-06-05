@@ -20,14 +20,14 @@ void loop() {
   int thumbFlex = analogRead(35);
   int pinkyFlex = analogRead(13);
 
-  // Serial.print(indexUp); Serial.print(",");
-  // Serial.print(indexLow); Serial.print(",");
-  // Serial.print(middleUp); Serial.print(",");
-  // Serial.print(middleLow); Serial.print(",");
-  // Serial.print(ringUp); Serial.print(",");
-  // Serial.print(ringLow); Serial.print(",");
+  Serial.print(indexUp); Serial.print(",");
+  Serial.print(indexLow); Serial.print(",");
+  Serial.print(middleUp); Serial.print(",");
+  Serial.print(middleLow); Serial.print(",");
+  Serial.print(ringUp); Serial.print(",");
+  Serial.print(ringLow); Serial.print(",");
   Serial.print(thumbFlex); Serial.print(",");
   Serial.println(pinkyFlex);
 
-  delay(500);
+  delay(50);
 }
