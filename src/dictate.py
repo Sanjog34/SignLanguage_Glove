@@ -21,7 +21,7 @@ def play_sound(file_path, static_playing: int) -> int:
 
     # Only play if armed (not the first prediction after a dynamic gesture)
     print(" ditcate side  "+ str(play_sound.counter) + "  " + str(static_playing),end="")
-    if play_sound.counter == 15 and static_playing:
+    if play_sound.counter == 13 and static_playing:
         if os.path.exists(file_path):
             os.system(f"mpg123 '{file_path}' > /dev/null 2>&1")
             return 1

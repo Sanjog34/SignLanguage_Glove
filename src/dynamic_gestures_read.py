@@ -258,7 +258,10 @@ Rules
 import sys
 import json
 import os
+import argparse
 import serial
+import time
+import subprocess
 from collections import deque
 
 # ── Serial config ─────────────────────────────────────────────────────────────
@@ -412,6 +415,7 @@ def save_session(session: dict):
 # ══ Main ══════════════════════════════════════════════════════════════════════
 
 def main():
+    # bind_bluetooth(args.port, args.mac)
 
     print("═" * 70)
     print(" Gesture Recorder  |  Ctrl-C to exit")

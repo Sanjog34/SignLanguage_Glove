@@ -3,7 +3,7 @@ import pandas as pd
 
 # === SETTINGS ===
 FOLDER_PATH = "../datasets/20K"
-OUTPUT_FILE = "../datasets/20K/merged_dataset_01.csv"
+OUTPUT_FILE = "../datasets/20K/merged/merged_dataset_01.csv"
 
 # get all csv files
 csv_files = [f for f in os.listdir(FOLDER_PATH) if f.endswith(".csv")]

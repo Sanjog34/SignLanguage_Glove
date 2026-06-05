@@ -88,8 +88,8 @@ import random
 # CONFIG
 # ─────────────────────────────────────────────────────────────
 LABEL= "ho"
-INPUT_JSON = f"../JSON_AUGMENTED_20K/JSON_DYNAMIC_DATA/gesture_dataset_{LABEL}_20k.json"
-OUTPUT_JSON = f"../JSON_AUGMENTED_20K/test_train/gestures_augmented_{LABEL}_20k_test.json"
+INPUT_JSON = f"../JSON_DYNAMIC_DATA/gesture_dataset_{LABEL}_20k.json"
+OUTPUT_JSON = f"../JSON_AUGMENTEDgestures_augmented_{LABEL}_20k_test.json"
 
 TARGET_TOTAL_SAMPLES = 1500
 
@@ -100,7 +100,7 @@ GYRO_NOISE_MAX  = 10.0
 
 # OPTIONAL SENSOR LIMITS
 FLEX_MIN, FLEX_MAX = 0, 300
-ACCEL_MIN, ACCEL_MAX = -4, 4
+ACCEL_MIN, ACCEL_MAX = -1, 1
 GYRO_MIN, GYRO_MAX = -500, 500
 
 

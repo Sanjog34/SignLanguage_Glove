@@ -135,5 +135,5 @@ void loop()
   SerialBT.print(",");
   SerialBT.print(values_to_send[9], 2);
   SerialBT.println();
-  delay(60);
+  delay(50);
 }
