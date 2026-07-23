@@ -192,7 +192,7 @@ The minimal delta between training and test metrics confirms high model generali
 
 An end-to-end video demonstration showing real-time sign recognition, dual-model inference switching, and instant audio vocalization is available below:
 
-[![Watch Demo Video](docs/images/thumbnail.jpg)](docs/demo.mp4)
+[Watch Demo Video](docs/demo.mp4)
 
 
 ---
