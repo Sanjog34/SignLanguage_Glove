@@ -1,6 +1,6 @@
 # Smart Glove for Real-Time Nepali Sign Language to Speech Translation
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 [![Platform](https://img.shields.io/badge/Platform-ESP32%20%7C%20Python-blue.svg)](https://www.espressif.com/en/products/socs/esp32)
 [![Framework](https://img.shields.io/badge/Framework-TensorFlow%20%7C%20Scikit--Learn-orange.svg)](https://www.tensorflow.org/)
 
@@ -16,7 +16,6 @@ This repository contains the source code, hardware design files, datasets, and d
   - [Hardware Interfacing & Sensor Calibration](#hardware-interfacing--sensor-calibration)
   - [Data Collection & Dataset Preparation](#data-collection--dataset-preparation)
   - [Model Architecture & Training](#model-architecture--training)
-  - [Mathematical Formulation of LSTM Model](#mathematical-formulation-of-lstm-model)
   - [Real-Time Inference Pipeline](#real-time-inference-pipeline)
   - [Text-to-Speech (TTS) Integration](#text-to-speech-tts-integration)
 - [Results and Discussion](#results-and-discussion)
@@ -31,7 +30,7 @@ This repository contains the source code, hardware design files, datasets, and d
 
 ## Abstract
 
-Communication is essential, yet most non-signers in Nepal do not understand Nepali Sign Language (NSL). This project presents a wearable smart glove system integrating **8 flex sensors** (capturing joint flexion across MCP and PIP finger joints) and an **MPU6050 6-axis IMU** mounted on an **ESP32 microcontroller**. Sensor data is transmitted via Bluetooth to a host environment, where a dual-model machine learning architecture performs real-time classification:
+Communication is essential, yet most non-signers in Nepal do not understand Nepali Sign Language (NSL). This project presents a wearable smart glove system integrating **8 flex sensors** (capturing joint flexion across MCP and PIP finger joints) and an **MPU6050 6-axis IMU** mounted on an **ESP32 microcontroller**. Sensor data is transmitted via Bluetooth to a host environment, where a dual machine learning model pipeline performs real-time classification:
 - **Random Forest Classifier**: Handles 9 static gestures (4 alphabets: *ka, kha, ga, gha, nga* and 4 numerals: *ek, dui, tin, char*) with **99.56% test accuracy**.
 - **2-Layer LSTM Network**: Processes 7 dynamic gestures (*namaste, mero, naam, sanjog, ho, malai, chinnu*) forming a basic self-introduction sequence, achieving **~94% validation accuracy**.
 
@@ -90,7 +89,7 @@ Across 320 real-time trials, the full system achieved an overall accuracy of **9
 - **ESP32 Microcontroller**: Dual-core SoC handling ADC acquisition, I2C IMU sampling, and Bluetooth RFCOMM streaming.
 - **Flex Sensors (x8)**: Variable bend-resistors positioned across finger joints (2.2" and 4.5" strips).
 - **MPU6050 IMU**: 3-axis accelerometer + 3-axis gyroscope for hand orientation and motion tracking.
-- **Resistors**: $20	ext{ k}\Omega$ precision fixed series resistors for flex sensor voltage dividers.
+- **Resistors**: $20	\text{ k}\Omega$ precision fixed series resistors for flex sensor voltage dividers.
 - **Audio Output Device**: Speaker/headphones connected to the host system.
 
 ### Software & Libraries
@@ -107,7 +106,7 @@ Across 320 real-time trials, the full system achieved an overall accuracy of **9
 - **Flex Sensor Placement**: 8 flex sensors are mapped to capture fine-grained finger articulation:
   - **Index, Middle, Ring Fingers**: 2 sensors per finger—one across the Proximal Interphalangeal (PIP / "Up") joint and one across the Metacarpophalangeal (MCP / "Low") joint (`idxUp`, `idxLow`, `midUp`, `midLow`, `ringUp`, `ringLow`).
   - **Thumb & Pinky**: 1 sensor each (`thumb`, `pinky`).
-- **Voltage Divider Optimization**: Flex resistance ranges from $\sim 20	ext{ k}\Omega$ (flat) to $\sim 24	ext{ k}\Omega$ (bent). Connecting a $20	ext{ k}\Omega$ series resistor ($R_2$) maximizes the ADC voltage differential to optimize 12-bit ADC sensitivity.
+- **Voltage Divider Optimization**: Flex resistance ranges from $\sim 20	\text{ k}\Omega$ (flat) to $\sim 24	\text{ k}\Omega$ (bent). Connecting a $20	\text{ k}\Omega$ series resistor ($R_2$) maximizes the ADC voltage differential to optimize 12-bit ADC sensitivity.
 - **Sensor Calibration**: Physical conditioning (15–20 fist flexes) redistributes sensor conductive ink before use. At startup, the system captures 100 baseline idle samples to compute per-sensor zero offsets.
 
 ### Data Collection & Dataset Preparation
@@ -115,7 +114,7 @@ Sampling is executed at **60 ms intervals**. Each feature vector consists of 17 
 $$\mathbf{x} = \left[ \text{idxUp}, \text{idxLow}, \text{midUp}, \text{midLow}, \text{ringUp}, \text{ringLow}, \text{thumb}, \text{pinky}, a_x, a_y, a_z, g_x, g_y, g_z, \text{acc\_g}_x, \text{acc\_g}_y, \text{acc\_g}_z \right]$$
 
 - **Static Dataset**: 1000 samples per gesture across 9 gestures = **9,000 labeled samples** (`.csv` format). Dynamic gyro parameters were excluded during static training.
-- **Dynamic Dataset**: Motion detection uses a 20-sample rolling buffer tracking accumulated gyroscope variances ($\Delta 	ext{acc\_g}$). A threshold $> 20$ triggers active recording, terminating after 7 consecutive static samples. 200 raw sequences per gesture were recorded and expanded to **1,500 samples per gesture** via white-noise data augmentation. All sequences were resampled to a fixed length of **70 frames** using linear interpolation.
+- **Dynamic Dataset**: Motion detection uses a 20-sample rolling buffer tracking accumulated gyroscope variances ($\Delta 	\text{acc\_g}$). A threshold $> 20$ triggers active recording, terminating after 7 consecutive static samples. 200 raw sequences per gesture were recorded and expanded to **1,500 samples per gesture** via white-noise data augmentation. All sequences were resampled to a fixed length of **70 frames** using linear interpolation.
 
 ---
 
@@ -193,9 +192,8 @@ The minimal delta between training and test metrics confirms high model generali
 
 An end-to-end video demonstration showing real-time sign recognition, dual-model inference switching, and instant audio vocalization is available below:
 
-[Smart Glove NSL Demo](docs/demo.mp4)
+[![Watch Demo Video](docs/images/thumbnail.jpg)](docs/demo.mp4)
 
-> *Note: Click the image above or visit `docs/demo.mp4` to watch the real-time gesture-to-speech conversion demo.*
 
 ---
 
@@ -212,31 +210,23 @@ The complete academic major project report submitted to the Department of Electr
 ### Prototype Smart Glove
 Physical wearable prototype featuring 8 integrated flex sensors, custom wiring harness, and glove-mounted ESP32/MPU6050 enclosure.
 
-![Prototype Smart Glove](docs/images/prototype_glove.png)
+![Prototype Smart Glove](docs/prototype_glove.png)
 
 ---
 
 ### Custom PCB Schematic
 KiCad EDA PCB schematic showing power regulation, ESP32 ADC pin routing for flex sensor voltage dividers, and I2C lines for MPU6050.
 
-![PCB Schematic](docs/images/pcb_schematic.png)
-
----
-
-### Example Gestures
-Sample static alphabet/numeral signs and dynamic self-introduction trajectories performed using the wearable smart glove.
-
-![Example Gestures](docs/images/example_gestures.png)
+![PCB Schematic](docs/pcb_schematic.png)
 
 ---
 
 ## Authors & Acknowledgments
-
 **Project Team (PAS078BEI Batch):**
-- **Ganesh Rokaya** (PAS078BEI013)
-- **Sanjog Sapkota** (PAS078BEI034)
-- **Santosh Kumar Barai** (PAS078BEI035)
-- **Upendra Raj Joshi** (PAS078BEI046)
+- [Ganesh Rokaya](https://github.com/Torngt) (PAS078BEI013)
+- [Sanjog Sapkota](https://github.com/Sanjog34) (PAS078BEI034)
+- [Santosh Kumar Barai](https://github.com/Skbarai) (PAS078BEI035)
+- [Upendra Raj Joshi](https://github.com/Upendra48) (PAS078BEI046)
 
 **Supervisor:** Asst. Prof. Khem Raj Koirala  
 **Department:** Department of Electronics and Computer Engineering, Pashchimanchal Campus, IOE, Tribhuvan University.
