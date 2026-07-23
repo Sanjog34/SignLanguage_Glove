@@ -111,7 +111,7 @@ Across 320 real-time trials, the full system achieved an overall accuracy of **9
 
 ### Data Collection & Dataset Preparation
 Sampling is executed at **60 ms intervals**. Each feature vector consists of 17 parameters:
-$$\mathbf{x} = \left[ \text{idxUp}, \text{idxLow}, \text{midUp}, \text{midLow}, \text{ringUp}, \text{ringLow}, \text{thumb}, \text{pinky}, a_x, a_y, a_z, g_x, g_y, g_z, \text{acc\_g}_x, \text{acc\_g}_y, \text{acc\_g}_z \right]$$
+$$\mathbf{x} = \left[ \text{idxUp}, \text{idxLow}, \text{midUp}, \text{midLow}, \text{ringUp}, \text{ringLow}, \text{thumb}, \text{pinky}, ax, ay, az, gx, gy, gz, \text{acc\_g}x, \text{acc\_g}y, \text{acc\_g}z \right]$$
 
 - **Static Dataset**: 1000 samples per gesture across 9 gestures = **9,000 labeled samples** (`.csv` format). Dynamic gyro parameters were excluded during static training.
 - **Dynamic Dataset**: Motion detection uses a 20-sample rolling buffer tracking accumulated gyroscope variances ($\Delta \text{acc\_g}$). A threshold $> 20$ triggers active recording, terminating after 7 consecutive static samples. 200 raw sequences per gesture were recorded and expanded to **1,500 samples per gesture** via white-noise data augmentation. All sequences were resampled to a fixed length of **70 frames** using linear interpolation.
